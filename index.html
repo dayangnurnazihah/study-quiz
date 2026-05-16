@@ -29,6 +29,38 @@
     --wrong: #ffb3c6;
     --correct-border: #4caf7d;
     --wrong-border: #e05580;
+    --loading-track: #e8c9d0;
+    --file-info-color: #2d6a4f;
+    --format-hint-color: #4a2a8a;
+    --percent-track: #e8c9d0;
+  }
+
+  [data-theme="dark"] {
+    --pink: #6b2040;
+    --pink-dark: #8a2d55;
+    --pink-deep: #ff85a1;
+    --mint: #0f2e20;
+    --mint-dark: #1e4d35;
+    --lavender: #1e1540;
+    --lavender-dark: #c9b8f5;
+    --yellow: #1e1a08;
+    --yellow-dark: #2e2810;
+    --peach: #2e1e10;
+    --sky: #081525;
+    --sky-dark: #74b9ff;
+    --bg: #0a080e;
+    --panel: #130d1a;
+    --border: #ff85a1;
+    --text: #f0d0dc;
+    --shadow: #6b2040;
+    --correct: #0f2e20;
+    --wrong: #2e0f1a;
+    --correct-border: #4caf7d;
+    --wrong-border: #ff85a1;
+    --loading-track: #201020;
+    --file-info-color: #7cc9a9;
+    --format-hint-color: #c9b8f5;
+    --percent-track: #201020;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; image-rendering: pixelated; }
@@ -118,7 +150,7 @@
 
   /* Loading bar at top */
   .loading-bar-outer {
-    background: #e8c9d0;
+    background: var(--loading-track);
     border: 3px solid var(--border);
     height: 18px;
     margin-bottom: 6px;
@@ -243,7 +275,7 @@
     border: 3px solid var(--mint-dark);
     padding: 10px 14px;
     font-size: 7px;
-    color: #2d6a4f;
+    color: var(--file-info-color);
     margin: 10px 0;
     display: none;
     line-height: 2;
@@ -279,7 +311,7 @@
   .btn-mint {
     background: var(--mint);
     border-color: var(--correct-border);
-    color: #2d6a4f;
+    color: var(--file-info-color);
     box-shadow: 4px 4px 0 var(--correct-border);
   }
   .btn-mint:hover { background: var(--mint-dark); }
@@ -287,7 +319,7 @@
   .btn-lavender {
     background: var(--lavender);
     border-color: var(--lavender-dark);
-    color: #4a2a8a;
+    color: var(--format-hint-color);
     box-shadow: 4px 4px 0 var(--lavender-dark);
   }
   .btn-lavender:hover { background: #b8a5f0; }
@@ -320,7 +352,7 @@
   }
 
   .progress-track {
-    background: #e8c9d0;
+    background: var(--loading-track);
     border: 3px solid var(--border);
     height: 20px;
     overflow: hidden;
@@ -403,7 +435,7 @@
 
   .option-btn:hover:not(:disabled) {
     background: var(--pink);
-    border-color: var(--pink-deep);
+    border-color: var(--pink-dark);
   }
 
   .option-btn:disabled { cursor: not-allowed; }
@@ -470,7 +502,7 @@
 
   .feedback-box.show { display: block; }
   .feedback-box.correct-fb { background: var(--mint); border-color: var(--correct-border); color: #1a4a2e; }
-  .feedback-box.wrong-fb { background: var(--pink); border-color: var(--wrong-border); color: #6b1a2a; }
+  .feedback-box.wrong-fb { background: var(--pink); border-color: var(--wrong-border); color: #daaab4; }
 
   @keyframes slide-in {
     0% { transform: translateY(-8px); opacity: 0; }
@@ -532,7 +564,7 @@
   }
 
   .percent-bar-outer {
-    background: #e8c9d0;
+    background: var(--loading-track);
     border: 4px solid var(--border);
     height: 30px;
     margin: 10px 0 6px;
@@ -595,7 +627,7 @@
   .review-item.r-wrong { background: var(--pink); border-color: var(--wrong-border); }
 
   .review-q { font-size: 7px; margin-bottom: 6px; line-height: 1.8; }
-  .review-detail { font-size: 6px; color: #555; }
+  .review-detail { font-size: 6px; color: var(--text); opacity: 0.7; }
 
   /* Pixel decoration */
   .pixel-deco {
@@ -635,7 +667,7 @@
     padding: 12px;
     font-size: 6px;
     line-height: 2.2;
-    color: #4a2a8a;
+    color: var(--format-hint-color);
     margin-top: 12px;
   }
 
@@ -664,6 +696,58 @@
     to { transform: rotate(360deg); }
   }
 
+  /* Dark mode toggle */
+  .theme-toggle {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 100;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    padding: 8px 10px;
+    border: 3px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    cursor: pointer;
+    box-shadow: 3px 3px 0 var(--shadow);
+    transition: transform 0.05s steps(1);
+    line-height: 1;
+  }
+  .theme-toggle:active { transform: translate(2px,2px); box-shadow: none; }
+  .theme-toggle:hover { background: var(--pink); }
+
+  /* dark body bg update */
+  [data-theme="dark"] body {
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(107,32,64,0.4) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(30,21,64,0.4) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(15,46,32,0.3) 0%, transparent 60%);
+  }
+
+  [data-theme="dark"] body::before {
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,133,161,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 30% 40%, rgba(201,184,245,0.3) 0%, transparent 100%),
+      radial-gradient(2px 2px at 60% 10%, rgba(76,175,125,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 30%, rgba(116,185,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 50% 70%, rgba(255,133,161,0.2) 0%, transparent 100%),
+      radial-gradient(2px 2px at 20% 80%, rgba(201,184,245,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 60%, rgba(76,175,125,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 85%, rgba(116,185,255,0.2) 0%, transparent 100%);
+  }
+
+  [data-theme="dark"] .title-bar {
+    background: #2a0d1a;
+  }
+
+  [data-theme="dark"] .question-box {
+    box-shadow: 4px 4px 0 var(--yellow-dark);
+  }
+
+  @media (max-width: 500px) {
+    .theme-toggle { top: 8px; right: 8px; font-size: 6px; padding: 6px 8px; }
+  }
+
   @media (max-width: 500px) {
     .stats-grid { grid-template-columns: 1fr; }
     .btn { font-size: 7px; padding: 10px 14px; }
@@ -673,6 +757,8 @@
 </style>
 </head>
 <body>
+
+<button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle dark/light mode">🌙 DARK</button>
 
 <div class="pixel-deco deco-1">🌸</div>
 <div class="pixel-deco deco-2">⭐</div>
@@ -827,6 +913,19 @@ let currentQ = 0;
 let score = { correct: 0, wrong: 0 };
 let answers = [];
 let answered = false;
+
+// ─── Theme toggle ─────────────────────────────────────────────
+function toggleTheme() {
+  const html = document.documentElement;
+  const btn = document.getElementById('themeToggle');
+  if (html.dataset.theme === 'dark') {
+    html.removeAttribute('data-theme');
+    btn.textContent = '🌙 DARK';
+  } else {
+    html.dataset.theme = 'dark';
+    btn.textContent = '☀️ LIGHT';
+  }
+}
 
 // ─── File handling ───────────────────────────────────────────
 const fileInput = document.getElementById('fileInput');
