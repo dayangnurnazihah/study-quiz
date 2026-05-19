@@ -1012,3 +1012,102 @@ body::before {
     padding: 16px;
   }
 }
+
+/* ── NAME POPUP OVERLAY ── */
+#nameOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+#nameModal {
+  background: var(--panel);
+  border: 4px solid var(--border);
+  box-shadow: 8px 8px 0 var(--shadow);
+  padding: 28px 24px;
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  animation: modal-pop 0.15s steps(4);
+}
+
+@keyframes modal-pop {
+  0% {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-title-bar {
+  background: var(--pink-dark);
+  border: 3px solid var(--border);
+  border-bottom: none;
+  padding: 6px 10px;
+  font-size: 8px;
+  color: white;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+  letter-spacing: 1px;
+  margin: -28px -24px 20px;
+}
+
+.modal-emoji {
+  font-size: 32px;
+  display: block;
+  margin-bottom: 12px;
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+.modal-prompt {
+  font-size: 8px;
+  color: var(--pink-deep);
+  line-height: 2;
+  margin-bottom: 18px;
+}
+
+#nameInput {
+  font-family: "Press Start 2P", monospace;
+  font-size: 10px;
+  width: 100%;
+  padding: 12px 10px;
+  border: 4px solid var(--border);
+  background: var(--yellow);
+  color: var(--text);
+  outline: none;
+  box-shadow: 4px 4px 0 var(--shadow);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+#nameInput:focus {
+  background: var(--yellow-dark);
+}
+
+#nameInput::placeholder {
+  color: var(--shadow);
+  opacity: 0.7;
+}
+
+#welcomeMsg {
+  display: none;
+  background: var(--mint);
+  border: 3px solid var(--mint-dark);
+  padding: 12px;
+  font-size: 7px;
+  color: var(--file-info-color);
+  line-height: 2.2;
+  margin-bottom: 16px;
+  animation: slide-in 0.2s steps(4);
+}
+
+#welcomeMsg.show {
+  display: block;
+}
