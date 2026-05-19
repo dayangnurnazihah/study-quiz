@@ -1,1201 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QUIZ.EXE</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&display=swap');
-
-  :root {
-    --pink: #ffb3c6;
-    --pink-dark: #ff85a1;
-    --pink-deep: #e05580;
-    --mint: #b5ead7;
-    --mint-dark: #7cc9a9;
-    --lavender: #c9b8f5;
-    --lavender-dark: #9b7fe8;
-    --yellow: #fef3b4;
-    --yellow-dark: #f5d86e;
-    --peach: #ffd6b0;
-    --sky: #bde0fe;
-    --sky-dark: #74b9ff;
-    --bg: #fce4ec;
-    --panel: #fff0f5;
-    --border: #e05580;
-    --text: #5c2a3a;
-    --shadow: #d6799a;
-    --correct: #b5ead7;
-    --wrong: #ffb3c6;
-    --correct-border: #4caf7d;
-    --wrong-border: #e05580;
-    --loading-track: #e8c9d0;
-    --file-info-color: #2d6a4f;
-    --format-hint-color: #4a2a8a;
-    --percent-track: #e8c9d0;
-  }
-
-  [data-theme="dark"] {
-    --pink: #6b2040;
-    --pink-dark: #8a2d55;
-    --pink-deep: #ff85a1;
-    --mint: #0f2e20;
-    --mint-dark: #1e4d35;
-    --lavender: #1e1540;
-    --lavender-dark: #c9b8f5;
-    --yellow: #1e1a08;
-    --yellow-dark: #2e2810;
-    --peach: #2e1e10;
-    --sky: #081525;
-    --sky-dark: #74b9ff;
-    --bg: #0a080e;
-    --panel: #130d1a;
-    --border: #ff85a1;
-    --text: #f0d0dc;
-    --shadow: #6b2040;
-    --correct: #0f2e20;
-    --wrong: #2e0f1a;
-    --correct-border: #4caf7d;
-    --wrong-border: #ff85a1;
-    --loading-track: #201020;
-    --file-info-color: #7cc9a9;
-    --format-hint-color: #c9b8f5;
-    --percent-track: #201020;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; image-rendering: pixelated; }
-
-  body {
-    background-color: var(--bg);
-    background-image:
-      radial-gradient(circle at 20% 20%, rgba(255,179,198,0.4) 0%, transparent 50%),
-      radial-gradient(circle at 80% 80%, rgba(201,184,245,0.3) 0%, transparent 50%),
-      radial-gradient(circle at 50% 50%, rgba(181,234,215,0.2) 0%, transparent 60%);
-    font-family: 'Press Start 2P', monospace;
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    overflow-x: hidden;
-  }
-
-  /* Pixel stars background */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-image:
-      radial-gradient(1px 1px at 10% 15%, rgba(255,133,161,0.6) 0%, transparent 100%),
-      radial-gradient(1px 1px at 30% 40%, rgba(201,184,245,0.6) 0%, transparent 100%),
-      radial-gradient(2px 2px at 60% 10%, rgba(181,234,215,0.8) 0%, transparent 100%),
-      radial-gradient(1px 1px at 80% 30%, rgba(255,214,176,0.6) 0%, transparent 100%),
-      radial-gradient(1px 1px at 50% 70%, rgba(189,224,254,0.6) 0%, transparent 100%),
-      radial-gradient(2px 2px at 20% 80%, rgba(255,179,198,0.5) 0%, transparent 100%),
-      radial-gradient(1px 1px at 90% 60%, rgba(201,184,245,0.5) 0%, transparent 100%),
-      radial-gradient(1px 1px at 70% 85%, rgba(181,234,215,0.5) 0%, transparent 100%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .container {
-    width: 100%;
-    max-width: 700px;
-    position: relative;
-    z-index: 1;
-  }
-
-  /* Title bar */
-  .title-bar {
-    background: var(--pink-dark);
-    border: 4px solid var(--border);
-    border-bottom: none;
-    padding: 8px 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 4px 0 0 var(--shadow), 0 -4px 0 var(--shadow);
-  }
-
-  .title-bar-dots {
-    display: flex;
-    gap: 5px;
-  }
-
-  .dot {
-    width: 12px; height: 12px;
-    border: 2px solid rgba(0,0,0,0.2);
-    image-rendering: pixelated;
-  }
-  .dot-red { background: #ff6b6b; }
-  .dot-yellow { background: #ffd93d; }
-  .dot-green { background: #6bcb77; }
-
-  .title-bar-text {
-    font-size: 10px;
-    color: white;
-    text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
-    flex: 1;
-    text-align: center;
-  }
-
-  /* Main panel */
-  .panel {
-    background: var(--panel);
-    border: 4px solid var(--border);
-    box-shadow: 6px 6px 0 var(--shadow);
-    padding: 28px;
-  }
-
-  /* Loading bar at top */
-  .loading-bar-outer {
-    background: var(--loading-track);
-    border: 3px solid var(--border);
-    height: 18px;
-    margin-bottom: 6px;
-    overflow: hidden;
-  }
-  .loading-bar-inner {
-    height: 100%;
-    background: repeating-linear-gradient(
-      90deg,
-      var(--pink-dark) 0px,
-      var(--pink-dark) 12px,
-      var(--lavender-dark) 12px,
-      var(--lavender-dark) 24px
-    );
-    width: 0%;
-    transition: width 0.5s steps(10);
-  }
-
-  .loading-label {
-    font-size: 7px;
-    color: var(--pink-deep);
-    text-align: center;
-    margin-bottom: 20px;
-    letter-spacing: 2px;
-  }
-
-  /* Screens */
-  .screen { display: none; }
-  .screen.active { display: block; }
-
-  /* Upload screen */
-  .game-title {
-    text-align: center;
-    margin-bottom: 24px;
-  }
-
-  .game-title h1 {
-    font-size: 22px;
-    color: var(--pink-deep);
-    text-shadow: 3px 3px 0 var(--shadow);
-    margin-bottom: 8px;
-    animation: blink-title 2s steps(1) infinite;
-  }
-
-  @keyframes blink-title {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
-  }
-
-  .game-title p {
-    font-size: 7px;
-    color: var(--lavender-dark);
-    line-height: 1.8;
-  }
-
-  .pixel-hearts {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-    margin: 12px 0;
-    font-size: 16px;
-  }
-
-  .heart {
-    animation: heartbeat 1.5s ease-in-out infinite;
-    display: inline-block;
-  }
-  .heart:nth-child(2) { animation-delay: 0.3s; }
-  .heart:nth-child(3) { animation-delay: 0.6s; }
-
-  @keyframes heartbeat {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-  }
-
-  /* Upload zone */
-  .upload-zone {
-    border: 4px dashed var(--pink-dark);
-    background: var(--yellow);
-    padding: 32px 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: background 0.1s steps(1);
-    margin: 20px 0;
-    position: relative;
-  }
-
-  .upload-zone:hover, .upload-zone.drag-over {
-    background: var(--yellow-dark);
-    border-color: var(--border);
-  }
-
-  .upload-zone input[type="file"] {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
-  }
-
-  .upload-icon {
-    font-size: 36px;
-    display: block;
-    margin-bottom: 12px;
-  }
-
-  .upload-zone p {
-    font-size: 8px;
-    color: var(--text);
-    line-height: 2;
-  }
-
-  .upload-zone .sub {
-    font-size: 6px;
-    color: var(--shadow);
-    margin-top: 6px;
-  }
-
-  .file-info {
-    background: var(--mint);
-    border: 3px solid var(--mint-dark);
-    padding: 10px 14px;
-    font-size: 7px;
-    color: var(--file-info-color);
-    margin: 10px 0;
-    display: none;
-    line-height: 2;
-  }
-
-  /* Buttons */
-  .btn {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 9px;
-    padding: 12px 20px;
-    border: 4px solid transparent;
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: transform 0.05s steps(1), box-shadow 0.05s steps(1);
-    display: inline-block;
-    position: relative;
-    letter-spacing: 1px;
-  }
-
-  .btn:active {
-    transform: translate(3px, 3px);
-    box-shadow: none !important;
-  }
-
-  .btn-pink {
-    background: var(--pink);
-    border-color: var(--pink-deep);
-    color: var(--pink-deep);
-    box-shadow: 4px 4px 0 var(--pink-deep);
-  }
-  .btn-pink:hover { background: var(--pink-dark); }
-
-  .btn-mint {
-    background: var(--mint);
-    border-color: var(--correct-border);
-    color: var(--file-info-color);
-    box-shadow: 4px 4px 0 var(--correct-border);
-  }
-  .btn-mint:hover { background: var(--mint-dark); }
-
-  .btn-lavender {
-    background: var(--lavender);
-    border-color: var(--lavender-dark);
-    color: var(--format-hint-color);
-    box-shadow: 4px 4px 0 var(--lavender-dark);
-  }
-  .btn-lavender:hover { background: #b8a5f0; }
-
-  .btn-full { width: 100%; text-align: center; display: block; }
-
-  .btn-row {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 20px;
-  }
-
-  /* Quiz screen */
-  .progress-section {
-    margin-bottom: 20px;
-  }
-
-  .progress-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-  }
-
-  .progress-label {
-    font-size: 7px;
-    color: var(--pink-deep);
-  }
-
-  .progress-track {
-    background: var(--loading-track);
-    border: 3px solid var(--border);
-    height: 20px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--pink-dark), var(--lavender-dark));
-    transition: width 0.4s steps(8);
-    position: relative;
-  }
-
-  .progress-fill::after {
-    content: '▶';
-    position: absolute;
-    right: -2px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 10px;
-    color: white;
-  }
-
-  .score-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 7px;
-    margin-top: 6px;
-    color: var(--lavender-dark);
-  }
-
-  .score-correct { color: var(--correct-border); }
-  .score-wrong { color: var(--wrong-border); }
-
-  .question-box {
-    background: var(--yellow);
-    border: 4px solid var(--yellow-dark);
-    padding: 18px;
-    margin-bottom: 20px;
-    box-shadow: 4px 4px 0 var(--yellow-dark);
-  }
-
-  .question-number {
-    font-size: 7px;
-    color: var(--shadow);
-    margin-bottom: 10px;
-    display: block;
-  }
-
-  .question-text {
-    font-size: 10px;
-    line-height: 2;
-    color: var(--text);
-  }
-
-  .options-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-
-  @media (max-width: 500px) {
-    .options-grid { grid-template-columns: 1fr; }
-  }
-
-  .option-btn {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 7px;
-    padding: 14px 10px;
-    border: 4px solid var(--border);
-    background: var(--panel);
-    color: var(--text);
-    cursor: pointer;
-    text-align: left;
-    line-height: 1.8;
-    transition: background 0.05s steps(1);
-    box-shadow: 4px 4px 0 var(--shadow);
-    position: relative;
-  }
-
-  .option-btn:hover:not(:disabled) {
-    background: var(--pink);
-    border-color: var(--pink-dark);
-  }
-
-  .option-btn:disabled { cursor: not-allowed; }
-
-  .option-btn .opt-label {
-    display: inline-block;
-    background: var(--pink-dark);
-    color: white;
-    padding: 2px 5px;
-    margin-right: 6px;
-    font-size: 7px;
-  }
-
-  .option-btn.correct {
-    background: var(--correct);
-    border-color: var(--correct-border);
-    box-shadow: 4px 4px 0 var(--correct-border);
-    animation: correct-flash 0.4s steps(2) 3;
-  }
-
-  .option-btn.correct .opt-label { background: var(--correct-border); }
-
-  .option-btn.wrong {
-    background: var(--wrong);
-    border-color: var(--wrong-border);
-    box-shadow: 4px 4px 0 var(--wrong-border);
-    animation: wrong-shake 0.3s steps(4) 2;
-  }
-
-  .option-btn.wrong .opt-label { background: var(--wrong-border); }
-
-  .option-btn.reveal {
-    background: var(--correct);
-    border-color: var(--correct-border);
-    box-shadow: 4px 4px 0 var(--correct-border);
-  }
-
-  .option-btn.reveal .opt-label { background: var(--correct-border); }
-
-  @keyframes correct-flash {
-    0% { background: var(--correct); }
-    50% { background: #d4f5e9; }
-    100% { background: var(--correct); }
-  }
-
-  @keyframes wrong-shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-4px); }
-    75% { transform: translateX(4px); }
-    100% { transform: translateX(0); }
-  }
-
-  .feedback-box {
-    background: var(--sky);
-    border: 4px solid var(--sky-dark);
-    padding: 12px 16px;
-    font-size: 8px;
-    line-height: 2;
-    margin-bottom: 16px;
-    display: none;
-    box-shadow: 4px 4px 0 var(--sky-dark);
-    animation: slide-in 0.2s steps(4);
-  }
-
-  .feedback-box.show { display: block; }
-  .feedback-box.correct-fb { background: var(--mint); border-color: var(--correct-border); color: #1a4a2e; }
-  .feedback-box.wrong-fb { background: var(--pink); border-color: var(--wrong-border); color: #daaab4; }
-
-  @keyframes slide-in {
-    0% { transform: translateY(-8px); opacity: 0; }
-    100% { transform: translateY(0); opacity: 1; }
-  }
-
-  /* Results screen */
-  .results-title {
-    text-align: center;
-    font-size: 16px;
-    color: var(--pink-deep);
-    text-shadow: 3px 3px 0 var(--shadow);
-    margin-bottom: 8px;
-  }
-
-  .results-subtitle {
-    text-align: center;
-    font-size: 7px;
-    color: var(--lavender-dark);
-    margin-bottom: 24px;
-    line-height: 2;
-  }
-
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-
-  .stat-card {
-    border: 4px solid;
-    padding: 14px 10px;
-    text-align: center;
-    box-shadow: 4px 4px 0;
-  }
-
-  .stat-card.total { border-color: var(--lavender-dark); box-shadow-color: var(--lavender-dark); background: var(--lavender); box-shadow: 4px 4px 0 var(--lavender-dark); }
-  .stat-card.correct-card { border-color: var(--correct-border); background: var(--correct); box-shadow: 4px 4px 0 var(--correct-border); }
-  .stat-card.wrong-card { border-color: var(--wrong-border); background: var(--wrong); box-shadow: 4px 4px 0 var(--wrong-border); }
-
-  .stat-num {
-    font-size: 22px;
-    display: block;
-    margin-bottom: 6px;
-    color: var(--text);
-    text-shadow: 2px 2px 0 rgba(0,0,0,0.15);
-  }
-
-  .stat-label {
-    font-size: 6px;
-    color: var(--text);
-    line-height: 1.8;
-  }
-
-  .score-percent {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-
-  .percent-bar-outer {
-    background: var(--loading-track);
-    border: 4px solid var(--border);
-    height: 30px;
-    margin: 10px 0 6px;
-    overflow: hidden;
-    box-shadow: 4px 4px 0 var(--shadow);
-  }
-
-  .percent-bar-inner {
-    height: 100%;
-    background: repeating-linear-gradient(
-      90deg,
-      var(--mint-dark) 0px, var(--mint-dark) 16px,
-      var(--correct-border) 16px, var(--correct-border) 32px
-    );
-    transition: width 1s steps(20);
-  }
-
-  .percent-label {
-    font-size: 8px;
-    color: var(--correct-border);
-  }
-
-  .grade-badge {
-    display: inline-block;
-    background: var(--yellow);
-    border: 4px solid var(--yellow-dark);
-    box-shadow: 4px 4px 0 var(--yellow-dark);
-    font-size: 28px;
-    padding: 10px 18px;
-    margin-bottom: 20px;
-    animation: float 2s ease-in-out infinite;
-  }
-
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
-  }
-
-  .review-list {
-    margin-top: 20px;
-  }
-
-  .review-title {
-    font-size: 8px;
-    color: var(--pink-deep);
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-    border-bottom: 3px solid var(--pink-dark);
-  }
-
-  .review-item {
-    padding: 12px;
-    margin-bottom: 10px;
-    border: 3px solid;
-    font-size: 7px;
-    line-height: 2;
-  }
-
-  .review-item.r-correct { background: var(--mint); border-color: var(--correct-border); }
-  .review-item.r-wrong { background: var(--pink); border-color: var(--wrong-border); }
-
-  .review-q { font-size: 7px; margin-bottom: 6px; line-height: 1.8; }
-  .review-detail { font-size: 6px; color: var(--text); opacity: 0.7; }
-
-  /* Pixel decoration */
-  .pixel-deco {
-    position: fixed;
-    pointer-events: none;
-    font-size: 20px;
-    animation: float 3s ease-in-out infinite;
-    z-index: 0;
-    opacity: 0.5;
-  }
-
-  .deco-1 { top: 10%; left: 5%; animation-delay: 0s; }
-  .deco-2 { top: 30%; right: 4%; animation-delay: 0.8s; }
-  .deco-3 { bottom: 20%; left: 3%; animation-delay: 1.4s; }
-  .deco-4 { bottom: 10%; right: 6%; animation-delay: 0.5s; }
-
-  /* Pixel cursor blink */
-  .cursor-blink::after {
-    content: '▮';
-    animation: blink 1s steps(1) infinite;
-    margin-left: 2px;
-  }
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-  }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 10px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--pink-dark); border: 2px solid var(--border); }
-
-  /* Format hint */
-  .format-hint {
-    background: var(--lavender);
-    border: 3px solid var(--lavender-dark);
-    padding: 12px;
-    font-size: 6px;
-    line-height: 2.2;
-    color: var(--format-hint-color);
-    margin-top: 12px;
-  }
-
-  .format-hint strong {
-    color: var(--pink-deep);
-    font-family: 'Press Start 2P', monospace;
-  }
-
-  .error-msg {
-    background: var(--wrong);
-    border: 3px solid var(--wrong-border);
-    padding: 10px;
-    font-size: 7px;
-    color: var(--pink-deep);
-    margin: 10px 0;
-    display: none;
-    line-height: 2;
-  }
-
-  .sparkle {
-    display: inline-block;
-    animation: spin 2s linear infinite;
-  }
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  /* Dark mode toggle */
-  .theme-toggle {
-    position: fixed;
-    top: 16px;
-    right: 16px;
-    z-index: 100;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 7px;
-    padding: 8px 10px;
-    border: 3px solid var(--border);
-    background: var(--panel);
-    color: var(--text);
-    cursor: pointer;
-    box-shadow: 3px 3px 0 var(--shadow);
-    transition: transform 0.05s steps(1);
-    line-height: 1;
-  }
-  .theme-toggle:active { transform: translate(2px,2px); box-shadow: none; }
-  .theme-toggle:hover { background: var(--pink); }
-
-  /* dark body bg update */
-  [data-theme="dark"] body {
-    background-image:
-      radial-gradient(circle at 20% 20%, rgba(107,32,64,0.4) 0%, transparent 50%),
-      radial-gradient(circle at 80% 80%, rgba(30,21,64,0.4) 0%, transparent 50%),
-      radial-gradient(circle at 50% 50%, rgba(15,46,32,0.3) 0%, transparent 60%);
-  }
-
-  [data-theme="dark"] body::before {
-    background-image:
-      radial-gradient(1px 1px at 10% 15%, rgba(255,133,161,0.3) 0%, transparent 100%),
-      radial-gradient(1px 1px at 30% 40%, rgba(201,184,245,0.3) 0%, transparent 100%),
-      radial-gradient(2px 2px at 60% 10%, rgba(76,175,125,0.4) 0%, transparent 100%),
-      radial-gradient(1px 1px at 80% 30%, rgba(116,185,255,0.3) 0%, transparent 100%),
-      radial-gradient(1px 1px at 50% 70%, rgba(255,133,161,0.2) 0%, transparent 100%),
-      radial-gradient(2px 2px at 20% 80%, rgba(201,184,245,0.3) 0%, transparent 100%),
-      radial-gradient(1px 1px at 90% 60%, rgba(76,175,125,0.3) 0%, transparent 100%),
-      radial-gradient(1px 1px at 70% 85%, rgba(116,185,255,0.2) 0%, transparent 100%);
-  }
-
-  [data-theme="dark"] .title-bar {
-    background: #2a0d1a;
-  }
-
-  [data-theme="dark"] .question-box {
-    box-shadow: 4px 4px 0 var(--yellow-dark);
-  }
-
-  @media (max-width: 500px) {
-    .theme-toggle { top: 8px; right: 8px; font-size: 6px; padding: 6px 8px; }
-  }
-
-  @media (max-width: 500px) {
-    .stats-grid { grid-template-columns: 1fr; }
-    .btn { font-size: 7px; padding: 10px 14px; }
-    .game-title h1 { font-size: 16px; }
-    .panel { padding: 16px; }
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QUIZ.EXE</title>
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle dark/light mode">🌙 DARK</button>
+  <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle dark/light mode">🌙 DARK</button>
 
-<div class="pixel-deco deco-1">🌸</div>
-<div class="pixel-deco deco-2">⭐</div>
-<div class="pixel-deco deco-3">🌼</div>
-<div class="pixel-deco deco-4">💫</div>
+  <div class="pixel-deco deco-1">🌸</div>
+  <div class="pixel-deco deco-2">⭐</div>
+  <div class="pixel-deco deco-3">🌼</div>
+  <div class="pixel-deco deco-4">💫</div>
 
-<div class="container">
-  <!-- Title bar -->
-  <div class="title-bar">
-    <div class="title-bar-dots">
-      <div class="dot dot-red"></div>
-      <div class="dot dot-yellow"></div>
-      <div class="dot dot-green"></div>
-    </div>
-    <span class="title-bar-text">QUIZ.EXE</span>
-  </div>
-
-  <div class="panel">
-    <!-- Loading bar -->
-    <div class="loading-bar-outer">
-      <div class="loading-bar-inner" id="loadingBar"></div>
-    </div>
-    <div class="loading-label" id="loadingLabel">LOADING...</div>
-
-    <!-- UPLOAD SCREEN -->
-    <div class="screen active" id="screenUpload">
-      <div class="game-title">
-        <div class="pixel-hearts">
-          <span class="heart">🩷</span>
-          <span class="heart">💜</span>
-          <span class="heart">🩷</span>
-        </div>
-        <h1>QUIZ.EXE</h1>
-        <p>INSERT FILE TO BEGIN<span class="cursor-blink"></span></p>
+  <div class="container">
+    <!-- Title bar -->
+    <div class="title-bar">
+      <div class="title-bar-dots">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
       </div>
-
-      <div class="upload-zone" id="uploadZone">
-        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
-        <span class="upload-icon">📁</span>
-        <p>DRAG & DROP YOUR FILE HERE</p>
-        <p>OR CLICK TO BROWSE</p>
-        <p class="sub">Supports .xlsx, .xls, .csv</p>
-      </div>
-
-      <div class="file-info" id="fileInfo">
-        📋 FILE LOADED: <span id="fileName"></span><br>
-        ❓ QUESTIONS FOUND: <span id="questionCount"></span>
-      </div>
-
-      <div class="error-msg" id="errorMsg"></div>
-
-      <div class="format-hint">
-        <strong>📌 EXPECTED FORMAT:</strong><br>
-        Column A: Question<br>
-        Column B: Option A<br>
-        Column C: Option B<br>
-        Column D: Option C<br>
-        Column E: Option D<br>
-        Column F: Answer (A / B / C / D)<br>
-        Row 1 = headers (will be skipped)
-      </div>
-
-      <div class="btn-row">
-        <button class="btn btn-mint btn-full" id="startBtn" onclick="startQuiz()" disabled>
-          ▶ START QUIZ
-        </button>
-      </div>
+      <span class="title-bar-text">QUIZ.EXE</span>
     </div>
 
-    <!-- QUIZ SCREEN -->
-    <div class="screen" id="screenQuiz">
-      <div class="progress-section">
-        <div class="progress-header">
-          <span class="progress-label">PROGRESS</span>
-          <span class="progress-label" id="progressText">0 / 0</span>
-        </div>
-        <div class="progress-track">
-          <div class="progress-fill" id="progressFill" style="width:0%"></div>
-        </div>
-        <div class="score-row">
-          <span class="score-correct">✔ CORRECT: <span id="scoreCorrect">0</span></span>
-          <span class="score-wrong">✘ WRONG: <span id="scoreWrong">0</span></span>
-        </div>
+    <div class="panel">
+      <!-- Loading bar -->
+      <div class="loading-bar-outer">
+        <div class="loading-bar-inner" id="loadingBar"></div>
       </div>
+      <div class="loading-label" id="loadingLabel">LOADING...</div>
 
-      <div class="question-box">
-        <span class="question-number" id="questionNum">QUESTION 1</span>
-        <span class="question-text" id="questionText"></span>
-      </div>
-
-      <div class="options-grid" id="optionsGrid"></div>
-
-      <div class="feedback-box" id="feedbackBox"></div>
-
-      <div style="text-align:center;">
-        <button class="btn btn-lavender" id="nextBtn" onclick="nextQuestion()" style="display:none;">
-          NEXT ▶
-        </button>
-      </div>
-    </div>
-
-    <!-- RESULTS SCREEN -->
-    <div class="screen" id="screenResults">
-      <div style="text-align:center; margin-bottom:16px;">
-        <div class="grade-badge" id="gradeBadge">🌸</div>
-      </div>
-      <h2 class="results-title">GAME OVER!</h2>
-      <p class="results-subtitle">HERE ARE YOUR RESULTS<span class="cursor-blink"></span></p>
-
-      <div class="stats-grid">
-        <div class="stat-card total">
-          <span class="stat-num" id="rTotal">0</span>
-          <span class="stat-label">TOTAL<br>QUESTIONS</span>
+      <!-- UPLOAD SCREEN -->
+      <div class="screen active" id="screenUpload">
+        <div class="game-title">
+          <div class="pixel-hearts">
+            <span class="heart">🩷</span>
+            <span class="heart">💜</span>
+            <span class="heart">🩷</span>
+          </div>
+          <h1>QUIZ.EXE</h1>
+          <p>INSERT FILE TO BEGIN<span class="cursor-blink"></span></p>
         </div>
-        <div class="stat-card correct-card">
-          <span class="stat-num" id="rCorrect">0</span>
-          <span class="stat-label">CORRECT<br>ANSWERS</span>
+
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
+          <span class="upload-icon">📁</span>
+          <p>DRAG & DROP YOUR FILE HERE</p>
+          <p>OR CLICK TO BROWSE</p>
+          <p class="sub">Supports .xlsx, .xls, .csv</p>
         </div>
-        <div class="stat-card wrong-card">
-          <span class="stat-num" id="rWrong">0</span>
-          <span class="stat-label">WRONG<br>ANSWERS</span>
+
+        <div class="file-info" id="fileInfo">
+          📋 FILE LOADED: <span id="fileName"></span><br>
+          ❓ QUESTIONS FOUND: <span id="questionCount"></span>
+        </div>
+
+        <div class="error-msg" id="errorMsg"></div>
+
+        <div class="format-hint">
+          <strong>📌 EXPECTED FORMAT:</strong><br>
+          Column A: Question<br>
+          Column B: Option A<br>
+          Column C: Option B<br>
+          Column D: Option C<br>
+          Column E: Option D<br>
+          Column F: Answer (A / B / C / D)<br>
+          Row 1 = headers (will be skipped)
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-mint btn-full" id="startBtn" onclick="startQuiz()" disabled>
+            ▶ START QUIZ
+          </button>
         </div>
       </div>
 
-      <div class="score-percent">
-        <div class="percent-bar-outer">
-          <div class="percent-bar-inner" id="percentBar" style="width:0%"></div>
+      <!-- QUIZ SCREEN -->
+      <div class="screen" id="screenQuiz">
+        <div class="progress-section">
+          <div class="progress-header">
+            <span class="progress-label">PROGRESS</span>
+            <span class="progress-label" id="progressText">0 / 0</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill" style="width:0%"></div>
+          </div>
+          <div class="score-row">
+            <span class="score-correct">✔ CORRECT: <span id="scoreCorrect">0</span></span>
+            <span class="score-wrong">✘ WRONG: <span id="scoreWrong">0</span></span>
+          </div>
         </div>
-        <span class="percent-label" id="percentLabel">0% SCORE</span>
+
+        <div class="question-box">
+          <span class="question-number" id="questionNum">QUESTION 1</span>
+          <span class="question-text" id="questionText"></span>
+        </div>
+
+        <div class="options-grid" id="optionsGrid"></div>
+
+        <div class="feedback-box" id="feedbackBox"></div>
+
+        <div style="text-align:center;">
+          <button class="btn btn-lavender" id="nextBtn" onclick="nextQuestion()" style="display:none;">
+            NEXT ▶
+          </button>
+        </div>
       </div>
 
-      <div class="review-list">
-        <div class="review-title">📝 QUESTION REVIEW</div>
-        <div id="reviewList"></div>
+      <!-- RESULTS SCREEN -->
+      <div class="screen" id="screenResults">
+        <div style="text-align:center; margin-bottom:16px;">
+          <div class="grade-badge" id="gradeBadge">🌸</div>
+        </div>
+        <h2 class="results-title">GAME OVER!</h2>
+        <p class="results-subtitle">HERE ARE YOUR RESULTS<span class="cursor-blink"></span></p>
+
+        <div class="stats-grid">
+          <div class="stat-card total">
+            <span class="stat-num" id="rTotal">0</span>
+            <span class="stat-label">TOTAL<br>QUESTIONS</span>
+          </div>
+          <div class="stat-card correct-card">
+            <span class="stat-num" id="rCorrect">0</span>
+            <span class="stat-label">CORRECT<br>ANSWERS</span>
+          </div>
+          <div class="stat-card wrong-card">
+            <span class="stat-num" id="rWrong">0</span>
+            <span class="stat-label">WRONG<br>ANSWERS</span>
+          </div>
+        </div>
+
+        <div class="score-percent">
+          <div class="percent-bar-outer">
+            <div class="percent-bar-inner" id="percentBar" style="width:0%"></div>
+          </div>
+          <span class="percent-label" id="percentLabel">0% SCORE</span>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-pink" onclick="restartQuiz()">↺ RETRY</button>
+          <button class="btn btn-mint" onclick="newFile()">📁 NEW FILE</button>
+        </div>
+
+        <div class="review-list">
+          <div class="review-title">📝 QUESTION REVIEW</div>
+          <div id="reviewList"></div>
+        </div>
+
+
       </div>
 
-      <div class="btn-row">
-        <button class="btn btn-pink" onclick="restartQuiz()">↺ RETRY</button>
-        <button class="btn btn-mint" onclick="newFile()">📁 NEW FILE</button>
-      </div>
-    </div>
+    </div><!-- /panel -->
+  </div><!-- /container -->
 
-  </div><!-- /panel -->
-</div><!-- /container -->
+  <!-- SheetJS from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-<!-- SheetJS from CDN -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-<script>
-let questions = [];
-let currentQ = 0;
-let score = { correct: 0, wrong: 0 };
-let answers = [];
-let answered = false;
-
-// ─── Theme toggle ─────────────────────────────────────────────
-function toggleTheme() {
-  const html = document.documentElement;
-  const btn = document.getElementById('themeToggle');
-  if (html.dataset.theme === 'dark') {
-    html.removeAttribute('data-theme');
-    btn.textContent = '🌙 DARK';
-  } else {
-    html.dataset.theme = 'dark';
-    btn.textContent = '☀️ LIGHT';
-  }
-}
-
-// ─── File handling ───────────────────────────────────────────
-const fileInput = document.getElementById('fileInput');
-const uploadZone = document.getElementById('uploadZone');
-
-uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
-uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
-uploadZone.addEventListener('drop', e => {
-  e.preventDefault();
-  uploadZone.classList.remove('drag-over');
-  const file = e.dataTransfer.files[0];
-  if (file) processFile(file);
-});
-
-fileInput.addEventListener('change', e => {
-  if (e.target.files[0]) processFile(e.target.files[0]);
-});
-
-function processFile(file) {
-  setLoading(20, 'READING FILE...');
-  hideError();
-  const reader = new FileReader();
-  const isCSV = file.name.toLowerCase().endsWith('.csv');
-
-  reader.onload = e => {
-    try {
-      setLoading(60, 'PARSING DATA...');
-      let wb;
-      if (isCSV) {
-        wb = XLSX.read(e.target.result, { type: 'string' });
-      } else {
-        wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
-      }
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
-
-      const parsed = [];
-      for (let i = 1; i < data.length; i++) {
-        const row = data[i];
-        const q = String(row[0] || '').trim();
-        const a = String(row[1] || '').trim();
-        const b = String(row[2] || '').trim();
-        const c = String(row[3] || '').trim();
-        const d = String(row[4] || '').trim();
-        const ans = String(row[5] || '').trim().toUpperCase();
-        if (q && (a || b) && ['A','B','C','D'].includes(ans)) {
-          parsed.push({ question: q, options: [a, b, c, d], answer: ans });
-        }
-      }
-
-      if (parsed.length === 0) {
-        showError('NO VALID QUESTIONS FOUND.\nCHECK YOUR FILE FORMAT!');
-        setLoading(0, 'LOADING...');
-        return;
-      }
-
-      questions = parsed;
-      setLoading(100, 'READY!');
-      document.getElementById('fileInfo').style.display = 'block';
-      document.getElementById('fileName').textContent = file.name.toUpperCase();
-      document.getElementById('questionCount').textContent = questions.length;
-      document.getElementById('startBtn').disabled = false;
-
-    } catch(err) {
-      showError('ERROR READING FILE: ' + err.message);
-      setLoading(0, 'LOADING...');
-    }
-  };
-
-  reader.onerror = () => { showError('FAILED TO READ FILE.'); setLoading(0, 'LOADING...'); };
-
-  if (isCSV) {
-    reader.readAsText(file);
-  } else {
-    reader.readAsArrayBuffer(file);
-  }
-}
-
-// ─── Quiz logic ───────────────────────────────────────────────
-function startQuiz() {
-  currentQ = 0;
-  score = { correct: 0, wrong: 0 };
-  answers = [];
-  showScreen('screenQuiz');
-  loadQuestion();
-}
-
-function loadQuestion() {
-  answered = false;
-  const q = questions[currentQ];
-  const total = questions.length;
-
-  // Progress
-  const pct = Math.round((currentQ / total) * 100);
-  document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('progressText').textContent = (currentQ + 1) + ' / ' + total;
-  document.getElementById('scoreCorrect').textContent = score.correct;
-  document.getElementById('scoreWrong').textContent = score.wrong;
-
-  // Loading bar
-  setLoading(pct, 'QUESTION ' + (currentQ+1) + ' OF ' + total);
-
-  // Question
-  document.getElementById('questionNum').textContent = 'QUESTION ' + (currentQ+1);
-  document.getElementById('questionText').textContent = q.question;
-
-  // Options
-  const labels = ['A','B','C','D'];
-  const grid = document.getElementById('optionsGrid');
-  grid.innerHTML = '';
-  q.options.forEach((opt, i) => {
-    if (!opt) return;
-    const btn = document.createElement('button');
-    btn.className = 'option-btn';
-    btn.innerHTML = `<span class="opt-label">${labels[i]}</span>${opt}`;
-    btn.dataset.choice = labels[i];
-    btn.onclick = () => selectAnswer(labels[i]);
-    grid.appendChild(btn);
-  });
-
-  // Hide feedback & next
-  const fb = document.getElementById('feedbackBox');
-  fb.className = 'feedback-box';
-  fb.style.display = 'none';
-  document.getElementById('nextBtn').style.display = 'none';
-}
-
-function selectAnswer(choice) {
-  if (answered) return;
-  answered = true;
-
-  const q = questions[currentQ];
-  const isCorrect = choice === q.answer;
-  const labels = ['A','B','C','D'];
-
-  // Update score
-  if (isCorrect) score.correct++; else score.wrong++;
-  answers.push({ q: q.question, chosen: choice, correct: q.answer, isCorrect });
-
-  // Style buttons
-  const btns = document.querySelectorAll('.option-btn');
-  btns.forEach(btn => {
-    btn.disabled = true;
-    const c = btn.dataset.choice;
-    if (c === q.answer) {
-      if (c === choice) btn.classList.add('correct');
-      else btn.classList.add('reveal');
-    } else if (c === choice && !isCorrect) {
-      btn.classList.add('wrong');
-    }
-  });
-
-  // Feedback
-  const fb = document.getElementById('feedbackBox');
-  if (isCorrect) {
-    fb.className = 'feedback-box correct-fb show';
-    const msgs = ['✨ PERFECT!', '🌸 CORRECT!', '💫 NICE ONE!', '⭐ GREAT JOB!'];
-    fb.innerHTML = msgs[Math.floor(Math.random()*msgs.length)] + ' THE ANSWER IS ' + q.answer + '.';
-  } else {
-    fb.className = 'feedback-box wrong-fb show';
-    fb.innerHTML = '💔 WRONG! THE CORRECT ANSWER IS ' + q.answer + '.';
-  }
-  fb.style.display = 'block';
-
-  // Update score display
-  document.getElementById('scoreCorrect').textContent = score.correct;
-  document.getElementById('scoreWrong').textContent = score.wrong;
-
-  // Next button
-  const nextBtn = document.getElementById('nextBtn');
-  nextBtn.style.display = 'inline-block';
-  if (currentQ === questions.length - 1) {
-    nextBtn.textContent = 'FINISH ✦';
-  } else {
-    nextBtn.textContent = 'NEXT ▶';
-  }
-}
-
-function nextQuestion() {
-  currentQ++;
-  if (currentQ >= questions.length) {
-    showResults();
-  } else {
-    loadQuestion();
-  }
-}
-
-function showResults() {
-  showScreen('screenResults');
-
-  const total = questions.length;
-  const correct = score.correct;
-  const wrong = score.wrong;
-  const pct = Math.round((correct / total) * 100);
-
-  document.getElementById('rTotal').textContent = total;
-  document.getElementById('rCorrect').textContent = correct;
-  document.getElementById('rWrong').textContent = wrong;
-  document.getElementById('percentLabel').textContent = pct + '% SCORE';
-
-  // Animated bar
-  setTimeout(() => {
-    document.getElementById('percentBar').style.width = pct + '%';
-  }, 100);
-
-  // Grade
-  let grade = '💔';
-  if (pct === 100) grade = '👑';
-  else if (pct >= 80) grade = '🌟';
-  else if (pct >= 60) grade = '🌸';
-  else if (pct >= 40) grade = '🌼';
-  document.getElementById('gradeBadge').textContent = grade;
-
-  setLoading(100, 'QUIZ COMPLETE!');
-
-  // Review list
-  const reviewList = document.getElementById('reviewList');
-  reviewList.innerHTML = '';
-  answers.forEach((a, i) => {
-    const div = document.createElement('div');
-    div.className = 'review-item ' + (a.isCorrect ? 'r-correct' : 'r-wrong');
-    div.innerHTML = `
-      <div class="review-q">${i+1}. ${a.q}</div>
-      <div class="review-detail">
-        ${a.isCorrect ? '✔ CORRECT' : '✘ WRONG'} — YOUR ANSWER: ${a.chosen} | CORRECT: ${a.correct}
-      </div>
-    `;
-    reviewList.appendChild(div);
-  });
-}
-
-function restartQuiz() {
-  startQuiz();
-}
-
-function newFile() {
-  questions = [];
-  answers = [];
-  score = { correct: 0, wrong: 0 };
-  currentQ = 0;
-  document.getElementById('fileInfo').style.display = 'none';
-  document.getElementById('startBtn').disabled = true;
-  document.getElementById('fileName').textContent = '';
-  document.getElementById('questionCount').textContent = '';
-  fileInput.value = '';
-  setLoading(0, 'LOADING...');
-  hideError();
-  showScreen('screenUpload');
-}
-
-// ─── Helpers ──────────────────────────────────────────────────
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-function setLoading(pct, label) {
-  document.getElementById('loadingBar').style.width = pct + '%';
-  document.getElementById('loadingLabel').textContent = label;
-}
-
-function showError(msg) {
-  const el = document.getElementById('errorMsg');
-  el.textContent = msg;
-  el.style.display = 'block';
-}
-
-function hideError() {
-  document.getElementById('errorMsg').style.display = 'none';
-}
-</script>
+  <script src="script.js"></script>
 </body>
+
 </html>
