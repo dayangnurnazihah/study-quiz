@@ -9,19 +9,7 @@
 </head>
 
 <body>
-  <div id="nameOverlay">
-    <div id="nameModal">
-      <div class="modal-title-bar">PLAYER_ENTRY.EXE</div>
-      <span class="modal-emoji">👾</span>
-      <p class="modal-prompt">ENTER YOUR NICKNAME TO BEGIN<span class="cursor-blink"></span></p>
-      <input type="text" id="nameInput" placeholder="TYPE YOUR NAME..." maxlength="20" autocomplete="off"
-        onkeydown="if(event.key==='Enter') confirmName()" />
-      <div id="welcomeMsg"></div>
-      <button class="btn btn-pink btn-full" onclick="confirmName()">
-        ▶ CONFIRM
-      </button>
-    </div>
-  </div>
+
   <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle dark/light mode">🌙 DARK</button>
 
   <div class="pixel-deco deco-1">🌸</div>
@@ -172,32 +160,7 @@
 
   <!-- SheetJS from CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script>
-    /* ── NAME POPUP LOGIC ── */
-    const MESSAGES = {
-      far: { emoji: "🌸", text: "goodluck study far hehe <33 fighting!!" },
-      sya: { emoji: "🌸", text: "goodluck study sya <33 semoga dimurahkan rezeki dan slay selalu" },
-      hakimee: { emoji: "💜", text: "i love you sayang, study betul betul tau" },
-    };
-    const DEFAULT_MSG = { emoji: "⭐", text: "study time!!" };
 
-    function confirmName() {
-      const raw = document.getElementById("nameInput").value.trim();
-      const key = raw.toLowerCase();
-      const msg = MESSAGES[key] || DEFAULT_MSG;
-      const box = document.getElementById("welcomeMsg");
-      const emoji = document.querySelector("#nameModal .modal-emoji");
-
-      emoji.textContent = msg.emoji;
-      box.textContent = msg.text;
-      box.classList.add("show");
-
-      /* Close after a short pause so they can read it */
-      setTimeout(() => {
-        document.getElementById("nameOverlay").style.display = "none";
-      }, 2200);
-    }
-  </script>
   <script src="script.js"></script>
 </body>
 
